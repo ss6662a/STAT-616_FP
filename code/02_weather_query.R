@@ -30,7 +30,7 @@ pull_noaa_month <- function(year, month, token) {
 
 weather_raw <- map_dfr(1:12, ~pull_noaa_month(2025, .x, noaa_token))
 
-write_csv(weather_raw, here("STAT-616_FP", "data", "weather_raw.csv"))
+write_csv(weather_raw, here("data", "weather_raw.csv"))
 
 # station lat and long data ----
 
@@ -50,7 +50,7 @@ stations_raw <- request("https://www.ncdc.noaa.gov/cdo-web/api/v2/stations") %>%
   select(id, name, latitude, longitude) %>% 
   rename(station_id = "id")
 
-write_csv(stations_raw, here("STAT-616_FP", "data", "stations_raw.csv"))
+write_csv(stations_raw, here("data", "stations_raw.csv"))
 
 
 # cleaning ----
@@ -71,5 +71,5 @@ weather <- weather_raw %>%
     tmean = (tmax + tmin) / 2, .after = tmax
   )
 
-write_csv(weather, here("STAT-616_FP", "data", "weather_clean.csv"))
+write_csv(weather, here("data", "weather_clean.csv"))
 
