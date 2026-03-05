@@ -21,18 +21,27 @@ walk(file_names, function(f) {
 bike_raw <- list.files(raw_dir, pattern = "\\.csv$", full.names = TRUE) %>% 
   map_dfr(read_csv, show_col_types = FALSE)
 
+bike_raw %>% 
+  filter(is.na(start_station_id)) %>% 
+  count(rideable_type)
+# all the missing values were ebikes that are not picked up or dropped off at specific loc
+# decided it was not important to our analysis
 
 daily_rides <- bike_raw %>% 
   mutate(date = as.Date(started_at)) %>% 
-  group_by(start_station_id, start_station_name,
-           start_lat, start_lng, date) %>% 
+  filter(rideable_type == "classic_bike") %>% # filtering out ebikes
+  group_by(start_station_id, 
+           start_station_name,
+           start_lat, 
+           start_lng, 
+           date) %>% 
   summarise(rides = n(), .groups = "drop")
 
 
 # daily_rides should be the file we call later
-write_csv(bike_raw, here("STAT-616_FP", "data", "bike_raw.csv"))
-write_csv(daily_rides, here("STAT-616_FP", "data", "daily_rides.csv"))
-
+write_csv(daily_rides, here("data", "daily_rides.csv"))
+# also saving raw file just in case. It is about a gigabyte though, so avoid saving if you don't need
+# write_csv(bike_raw, here("data", "bike_raw.csv"))
 
 
 
