@@ -8,7 +8,7 @@ months <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "1
 file_names <- paste0("2025", months, "-capitalbikeshare-tripdata.zip")
 
 raw_dir <- here("STAT-616_FP", "data", "raw_bike") # may need to change bc I have a .Rproj, which might mess with here()
-
+dir.create(raw_dir, recursive = TRUE, showWarnings = FALSE) # need bc git doesn't have that folder
 
 walk(file_names, function(f) {
   url <- paste0(base_url, f)
