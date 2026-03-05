@@ -1,0 +1,24 @@
+
+
+# getting DC income data ----
+
+api_key <- Sys.getenv("CENSUS_API_KEY")
+
+# https://censusreporter.org for finding variables
+
+income <- get_acs(
+  geography = "tract",
+  variables = c(
+    median_income    = "B19013_001",  # median household income
+    pct_poverty      = "B17001_002",  # pop  below poverty line
+    total_population = "B01001_001"   # total population
+  ),
+  state    = "DC",
+  year     = 2023, # latest year available
+  geometry = TRUE
+) %>% 
+  st_transform(4326) # EPSG code
+
+st_write(income, here("data", "dc_income.geojson"))
+
+
