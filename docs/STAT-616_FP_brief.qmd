@@ -31,7 +31,6 @@ source(here("code", "03_income_data"))
 #| label: create full, joined data set
 #| warning: false
 #| message: false
-#| output: false
 
 source(here("code", "04_combine_data.R"))
 
@@ -39,12 +38,28 @@ source(here("code", "04_combine_data.R"))
 
 
 
-brief starts here
+# Data
+
+We pulled data from the Capital Bikeshare website and aggregated it to the number of rides per day. We pulled weather data from the DCA weather station using the NOAA api. We used the singular weather station because DC is a small enough geographic area where the area is impacted similar-enough, where it shouldn't impact the analysis. First, we tried to gather data from the several DC weather stations using the same api, but only one weather station had less than half their data missing. Going to one, reliable station simplifies the joining of data as well as makes the weather data more reliable. Finally, we used the census api to get income, poverty, and population data. The station and income data were joined geographically using lat and long coordinates of the bikeshare stations, then adding weather data by date.
+
+```{r}
+#| label: data head
+
+head(data_full)
+
+# I want to put this in a nice table
+
+```
+
+
+# Main findings
+
+```{r}
+#| lable: Poisson Regression
 
 
 
-
-
+```
 
 
 
