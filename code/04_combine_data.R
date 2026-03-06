@@ -13,7 +13,7 @@ income <- st_read(here("data", "dc_income.geojson"))
 # dealing with missing values ----
 
 colSums(is.na(bike)) # 0 without ebikes
-colSums(is.na(weather)) # need to deal with
+colSums(is.na(dca_weather)) # much better
 colSums(is.na(income)) # 5 missing estimates for median income, probably okay to drop
 
 ## weather NAs ----
