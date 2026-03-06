@@ -19,6 +19,23 @@ income <- get_acs(
 ) %>% 
   st_transform(4326) # EPSG code
 
-st_write(income, here("data", "dc_income.geojson"))
+# clean ----
+
+income_clean <- income %>% 
+  st_drop_geometry() %>% # can't pivot with geometery
+  select(GEOID, variable, estimate, moe) %>% # might drop moe later
+  pivot_wider(
+    names_from = variable,
+    values_from = c(estimate, moe)
+  ) %>% 
+  left_join(
+    income %>% select(GEOID, geometry) %>% distinct(GEOID, .keep_all = TRUE),
+    by = "GEOID"
+  ) %>% 
+  st_as_sf()
+  
+
+
+st_write(income_clean, here("data", "dc_income.geojson"))
 
 
