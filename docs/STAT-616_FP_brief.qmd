@@ -5,6 +5,39 @@ format: pdf
 date: "2026-03-11"
 ---
 
+```{r}
+#| label: run packages
+#| warning: false
+#| message: false
+
+library(here)
+source(here("code", "00_load_packages.R"))
+
+```
+
+```{r}
+#| eval: false
+# run eval: true if you don't already have the data
+
+source(here("code", "01_bikeshare_data.R"))
+source(here("code", "02_weather_data.R"))
+source(here("code", "03_income_data"))
+
+
+```
+
+
+```{r}
+#| label: create full, joined data set
+#| warning: false
+#| message: false
+#| output: false
+
+source(here("code", "04_combine_data.R"))
+
+```
+
+
 
 brief starts here
 

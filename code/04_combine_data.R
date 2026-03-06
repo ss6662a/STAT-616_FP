@@ -6,7 +6,7 @@
 
 bike <- read_csv(here("data", "daily_rides.csv"))
 weather <- read_csv(here("data", "dca_weather.csv"))
-income <- st_read(here("data", "dc_income.geojson"))
+income <- st_read(here("data", "dc_income.geojson"), quiet = TRUE)
 
 head(bike)
 head(weather)
@@ -41,7 +41,7 @@ full_data <- bike %>%
  
 # need to deal with missing values still
 
-colSums(full_data)
+colSums(is.na(full_data))
 
 
 
