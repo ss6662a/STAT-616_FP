@@ -32,6 +32,11 @@ income_clean <- income %>%
     income %>% select(GEOID, geometry) %>% distinct(GEOID, .keep_all = TRUE),
     by = "GEOID"
   ) %>% 
+  rename(
+    est_total_pop = "estimate_total_population",
+    est_pct_poverty = "estimate_pct_poverty",
+    est_med_income = "estimate_median_income"
+  ) %>% 
   st_as_sf()
   
 
