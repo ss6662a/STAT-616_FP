@@ -21,13 +21,13 @@ pull_noaa_month_dca <- function(year, month, token) {
   request("https://www.ncdc.noaa.gov/cdo-web/api/v2/data") %>% 
     req_headers(token = token) %>% 
     req_url_query(
-      datasetid  = "GHCND",
+      datasetid = "GHCND",
       datatypeid = "TMAX,TMIN,PRCP,SNOW,AWND",
       stationid = "GHCND:USW00013743", # Reagan weather station
-      startdate  = start,
-      enddate    = end,
-      limit      = 1000,
-      units      = "standard"
+      startdate = start,
+      enddate = end,
+      limit = 1000,
+      units = "standard"
     ) |>
     req_perform() %>% 
     resp_body_json() %>% 
