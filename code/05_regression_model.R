@@ -12,12 +12,14 @@ model_data <- full_data %>%
     poverty_pct = 100 * est_pct_poverty / est_total_pop
   )
 
+## I don't think we should just drop the NAs...but good for quick modeling
+## fixed NAs, so this should no longer be needed
+
 # check data
 glimpse(model_data)
 summary(model_data)
 
 # visualization ----
-
 
 
 daily_total <- model_data %>%
@@ -35,7 +37,7 @@ ggplot(daily_total, aes(x = date, y = total_rides)) +
 
 # rides distribution
 ggplot(model_data, aes(x = rides)) +
-  geom_histogram(bins = 40) +
+  geom_histogram(bins = 40) + ## 40 bins is too much, no?
   labs(
     title = "Distribution of Daily Rides",
     x = "Rides",
