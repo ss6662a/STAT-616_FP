@@ -32,7 +32,7 @@ summary(pois_model)
 exp(coef(pois_model))
 
 # overdispersion check
-deviance(pois_model) / df.residual(pois_model)
+poi_overdispersion <- deviance(pois_model) / df.residual(pois_model)
 
 
 ################################ 
@@ -45,7 +45,7 @@ nb_model <- glm.nb(
   data = model_data
 )
 
-deviance(nb_model) / df.residual(nb_model)
-AIC(pois_model, nb_model)
+nb_overdispersion <- deviance(nb_model) / df.residual(nb_model)
+aic_comp <- AIC(pois_model, nb_model)
 
 
