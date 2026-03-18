@@ -64,7 +64,7 @@ We realized that I accidentally removed dates that had no rides, which would uni
 ## Poisson Regression Model
 
 ```{r}
-#| lable: Poisson Regression
+#| label: Poisson Regression
 
 source(here("code", "05_regression_model.R"))
 
@@ -73,6 +73,13 @@ source(here("code", "05_regression_model.R"))
 
 
 __ talk about how the deviance is very high because of overdispersion
+
+
+```{r}
+
+summary(pois_model)
+
+```
 
 
 ## Negative Binomal Model
