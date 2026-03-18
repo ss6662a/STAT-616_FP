@@ -69,10 +69,7 @@ We realized that I accidentally removed dates that had no rides, which would uni
 source(here("code", "05_regression_model.R"))
 
 ```
-
-
-
-__ We first used a Poisson regression model to study how daily bikeshare rides are related to factors like temperature, rain, snow, wind, income, poverty, and weekday.The Poisson model assumes that the mean and variance are the same. To check this, we calculated the dispersion statistic, which came out to be 11.77. This is much larger than 1, showing that the data has much more variability than the Poisson model can handle.Because of this overdispersion, the Poisson model does not fit the data well and is not reliable for drawing conclusions, although it still helps as a basic starting point.
+____ We first used a Poisson regression model to study how daily bikeshare rides are related to factors like temperature, rain, snow, wind, income, poverty, and weekday.The Poisson model assumes that the mean and variance are the same. To check this, we calculated the dispersion statistic, which came out to be 11.77. This is much larger than 1, showing that the data has much more variability than the Poisson model can handle.Because of this overdispersion, the Poisson model does not fit the data well and is not reliable for drawing conclusions, although it still helps as a basic starting point.
 
 
 ## Negative Binomal Model
