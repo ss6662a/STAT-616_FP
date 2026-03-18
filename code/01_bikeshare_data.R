@@ -38,8 +38,25 @@ daily_rides <- bike_raw %>%
   summarise(rides = n(), .groups = "drop")
 
 
+# add the days with no rides back to the data set
+
+all_stations <- daily_rides %>% 
+  distinct(start_station_id, start_station_name, start_lat, start_lng)
+
+all_dates <- tibble(
+  date = seq(as.Date("2025-01-01"), as.Date("2025-12-31"), by = "day")
+)
+
+daily_rides2 <- all_stations %>% 
+  cross_join(all_dates) %>% 
+  left_join(daily_rides,
+            by = c("start_station_id", "start_station_name", "start_lat", "start_lng", "date")
+            ) %>% 
+  mutate(rides = replace_na(rides, 0)) # all dates with no data should be 0
+
+
 # daily_rides should be the file we call later
-write_csv(daily_rides, here("data", "daily_rides.csv"))
+write_csv(daily_rides2, here("data", "daily_rides.csv"))
 # also saving raw file just in case. It is about a gigabyte though, so avoid saving if you don't need
 # write_csv(bike_raw, here("data", "bike_raw.csv"))
 
