@@ -45,11 +45,18 @@ We pulled data from the Capital Bikeshare website and aggregated it to the numbe
 ```{r}
 #| label: data head
 
-head(data_full)
-
-# I want to put this in a nice table
+ready_data %>% 
+  head() %>% 
+  select(start_station_name, date, rides, est_med_income, prcp, snow, tmean) %>%
+  flextable() %>% 
+  autofit() %>% 
+  fit_to_width(max_width = 6.5)
 
 ```
+
+
+We realized that I accidentally removed dates that had no rides, which would unintentionally bias our model. We fixed it by going back and adding all the dates after aggregating rides. Dates with missing values where then replaced with 0, indicating that no bikeshare rides where taken from that station that day.
+
 
 
 # Main findings
