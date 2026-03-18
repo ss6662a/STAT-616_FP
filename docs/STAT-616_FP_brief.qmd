@@ -69,10 +69,7 @@ We realized that I accidentally removed dates that had no rides, which would uni
 source(here("code", "05_regression_model.R"))
 
 ```
-
-
-
-__ talk about how the deviance is very high because of overdispersion
+____ We first used a Poisson regression model to study how daily bikeshare rides are related to factors like temperature, rain, snow, wind, income, poverty, and weekday.The Poisson model assumes that the mean and variance are the same. To check this, we calculated the dispersion statistic, which came out to be 11.77. This is much larger than 1, showing that the data has much more variability than the Poisson model can handle.Because of this overdispersion, the Poisson model does not fit the data well and is not reliable for drawing conclusions, although it still helps as a basic starting point.
 
 
 ```{r}
@@ -84,15 +81,8 @@ summary(pois_model)
 
 ## Negative Binomal Model
 
+---- To deal with the overdispersion in the Poisson model, we fitted a Negative Binomial regression model, which is better suited when the data has extra variability.For this model, the dispersion statistic was about 1.08, which is very close to 1. This shows that the Negative Binomial model is able to handle the variability in the data much better.We also compared the predictive performance of both models using RMSE and found that the RMSE values were almost the same. This suggests that both models produce similar average predictions.In addition, we compared the models using AIC. The Poisson model had a very high AIC, while the Negative Binomial model had a much lower AIC, indicating a significantly better fit.Overall, these results suggest that the Negative Binomial model is more appropriate for this data.
 
 
-In order to __ the high deviance and variance from the Poisson model, we tried to model the data using the negative binomial model
-
-highlight the AIC and variance/deviance and dispersion (poisson 11.77 vs bi nominal _lower_)
-
-
-----
-
-found that the rmse for each was the same
 
 
