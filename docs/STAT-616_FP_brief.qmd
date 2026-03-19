@@ -1,8 +1,8 @@
 ---
 title: "STAT-616 Final Project Brief"
-author: "Soren Snyder"
+author: "Soren Snyder and Tahmina Alam"
 format: pdf
-date: "2026-03-11"
+date: "2026-03-18"
 ---
 
 ```{r}
@@ -36,7 +36,7 @@ source(here("code", "04_combine_data.R"))
 
 ```
 
-
+In order to keep the brief clean, most of the code is run in separate files which can be found here: https://github.com/ss6662a/STAT-616_FP
 
 # Data
 
@@ -69,20 +69,25 @@ We realized that I accidentally removed dates that had no rides, which would uni
 source(here("code", "05_regression_model.R"))
 
 ```
-____ We first used a Poisson regression model to study how daily bikeshare rides are related to factors like temperature, rain, snow, wind, income, poverty, and weekday.The Poisson model assumes that the mean and variance are the same. To check this, we calculated the dispersion statistic, which came out to be 11.77. This is much larger than 1, showing that the data has much more variability than the Poisson model can handle.Because of this overdispersion, the Poisson model does not fit the data well and is not reliable for drawing conclusions, although it still helps as a basic starting point.
 
+We first used a Poisson regression model to study how daily bikeshare rides are related to factors like temperature, rain, snow, wind, income, poverty, and weekday.The Poisson model assumes that the mean and variance are the same. To check this, we calculated the dispersion statistic, which came out to be 11.77. This is much larger than 1, showing that the data has much more variability than the Poisson model can handle.Because of this overdispersion, the Poisson model does not fit the data well and is not reliable for drawing conclusions, although it still helps as a basic starting point.
 
 ```{r}
-
-summary(pois_model)
-
+as_flextable(pois_model) %>% 
+  autofit() %>% 
+  fit_to_width(max_width = 6.5)
 ```
+
 
 
 ## Negative Binomal Model
 
----- To deal with the overdispersion in the Poisson model, we fitted a Negative Binomial regression model, which is better suited when the data has extra variability.For this model, the dispersion statistic was about 1.08, which is very close to 1. This shows that the Negative Binomial model is able to handle the variability in the data much better.We also compared the predictive performance of both models using RMSE and found that the RMSE values were almost the same. This suggests that both models produce similar average predictions.In addition, we compared the models using AIC. The Poisson model had a very high AIC, while the Negative Binomial model had a much lower AIC, indicating a significantly better fit.Overall, these results suggest that the Negative Binomial model is more appropriate for this data.
+To deal with the overdispersion in the Poisson model, we fitted a Negative Binomial regression model, which is better suited when the data has extra variability.For this model, the dispersion statistic was about 1.08, which is very close to 1. This shows that the Negative Binomial model is able to handle the variability in the data much better.We also compared the predictive performance of both models using RMSE and found that the RMSE values were almost the same. This suggests that both models produce similar average predictions.In addition, we compared the models using AIC. The Poisson model had a very high AIC, while the Negative Binomial model had a much lower AIC, indicating a significantly better fit. Overall, these results suggest that the Negative Binomial model is more appropriate for this data.
 
-
+```{r}
+as_flextable(nb_model) %>% 
+  autofit() %>% 
+  fit_to_width(max_width = 6.5)
+```
 
 
