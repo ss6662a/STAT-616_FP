@@ -40,7 +40,7 @@ poi_overdispersion <- deviance(pois_model) / df.residual(pois_model)
 ###################################
 
 
-nb_model <- glm.nb(
+nb_model <- MASS::glm.nb( # need to force MASS becuase it conlficts with tidyverse "select()"
   rides ~ tmean + prcp + snow + awnd + income_10k + poverty_pct + weekday,
   data = model_data
 )
