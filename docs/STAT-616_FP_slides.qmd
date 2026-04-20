@@ -7,7 +7,6 @@ format:
     theme: moon
 ---
 
-
 ```{r}
 #| label: packages
 #| echo: false
