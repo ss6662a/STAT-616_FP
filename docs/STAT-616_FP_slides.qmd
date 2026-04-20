@@ -1,0 +1,96 @@
+---
+title: "STAT-616 Final Presentation"
+author: "Soren Snyder and Tahmina Alam"
+date: 22-4-2026
+format: 
+  revealjs: 
+    theme: moon
+---
+
+
+# Capital Bikeshare Ride Counts by Weather and Income
+
+# Background
+
+## Importance
+
+- explain why this matters
+- easy transportation should be accessible to those who need it the most
+- does weather disproportionately affect lower income groups
+
+## Research Question
+
+write the research question
+
+## Data
+
+- Capital Bikeshare Data
+- NOAA
+  - DCA Weather Station
+- Census (_need to be more exact__)
+
+
+## Data Structure
+
+- show head() table here (library(stargazer)??)
+
+
+
+## Challenges and Limitations with the Data
+
+
+## Daily Rides
+
+historgram of rides by day
+
+## Time Series
+
+seasonality brings temperature as a potential predictor
+
+
+# Modeling
+
+## Goals
+
+- interatiction term, count data
+
+## Poisson
+
+explain Poisson model..maybe use Latex to write out on another slide
+
+## Negative Binomial
+
+explain overdispersion of poisson model, so needed to swtich to negative binomial
+
+## Comparison
+
+negative binomal clears
+
+# Interpretation
+
+## Interaction term
+
+look at model results table
+
+##
+
+interaction plot here?
+
+## Coefficient Plot
+
+plot here
+
+## Conclusions
+
+some conclusions
+
+# Thank you
+
+
+
+
+
+
+
+
+
