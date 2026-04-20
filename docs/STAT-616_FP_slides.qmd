@@ -45,9 +45,17 @@ write the research question
 ## Data
 
 - Capital Bikeshare Data
-- NOAA
+- Nation Oceanic and Atmospheric Administration (NOAA)
   - DCA Weather Station
-- Census (_need to be more exact__)
+- Census Income Data
+
+## Challenges and Limitations with the Data
+
+- Missing values
+  - Removing e-bikes
+  - DCA weather station
+  - Imputation for wind speed
+- Rides outside DC boundaries were removed
 
 
 ## Data Structure
@@ -80,12 +88,8 @@ ready_data %>%
 
 
 
-## Challenges and Limitations with the Data
-
 
 ## Daily Rides
-
-needs to change
 
 ```{r}
 #| label: exploratory histogram
@@ -143,9 +147,15 @@ legend("topleft",
 
 ## Goals
 
-- interatiction term, count data
+- Want to predict how the number of rides will differ as income differs and weather changes
+  - interaction between income and weather
+- Count data so Poisson model
+
+- interaction term, count data
 
 ## Poisson
+
+- idk
 
 explain Poisson model..maybe use Latex to write out on another slide
 
@@ -295,7 +305,8 @@ ggplot(nb_coef, aes(x = reorder(term, estimate), y = estimate)) +
 
 ## Conclusions
 
-some conclusions
+- The interaction has a small, but significant impact on the count of rides.
+- other conclusions
 
 # Thank you
 
