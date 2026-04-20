@@ -1,14 +1,29 @@
 ---
-title: "STAT-616 Final Presentation"
+title: "Weather and Income's impact on Capital Bikeshare Rides"
 author: "Soren Snyder and Tahmina Alam"
-date: 22-4-2026
+date: "April 22, 2026"
 format: 
   revealjs: 
     theme: moon
 ---
 
 
-# Capital Bikeshare Ride Counts by Weather and Income
+```{r}
+#| label: setup
+#| echo: false
+#| output: false
+#| cache: true
+
+library(here)
+library(tidyverse)
+
+source(here("code", "00_load_packages.R"))
+source(here("code", "04_combine_data.R"))
+source(here("code", "05_regression_model.R"))
+
+```
+
+
 
 # Background
 
@@ -32,7 +47,21 @@ write the research question
 
 ## Data Structure
 
-- show head() table here (library(stargazer)??)
+```{r}
+#| label: head of data
+
+ready_data %>% 
+  head() %>% 
+  select(start_station_name, date, rides, est_med_income, prcp, snow, tmean) %>%
+  kable(digits = 2) %>%
+  kable_styling(
+    full_width = FALSE
+  ) %>%
+  row_spec(0, color = "white") %>%
+  row_spec(1:2, color = "white")
+
+
+```
 
 
 
@@ -41,7 +70,21 @@ write the research question
 
 ## Daily Rides
 
-historgram of rides by day
+needs to change
+
+```{r}
+#| label: exploratory histogram
+#| cache: true
+
+par(mfrow = c(1, 1), bg = "azure3")
+hist(model_data$rides, breaks = 50,
+     col = "chocolate3",
+     main = "Number of Rides per Day", col.main = "grey0",
+     xlab = "Rides",
+     ylab = "Number of Days",
+     border = NA)
+
+```
 
 ## Time Series
 
@@ -64,7 +107,20 @@ explain overdispersion of poisson model, so needed to swtich to negative binomia
 
 ## Comparison
 
-negative binomal clears
+```{r}
+#| label: comparison table
+
+model_compare %>%
+  kable(digits = 2) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  row_spec(0, color = "white") %>%
+  row_spec(1:2, color = "white")
+
+
+```
 
 # Interpretation
 
@@ -74,7 +130,50 @@ look at model results table
 
 ##
 
-interaction plot here?
+```{r}
+#| label: interaction plot
+#| cache: true
+#| echo: false
+
+pred_grid <- expand.grid(
+  tmean = seq(20, 90, by = 1),
+  income_10k = c(5, 10, 15),
+  prcp = 0,
+  snow = 0,
+  awnd = mean(model_data$awnd),
+  poverty_pct = mean(model_data$poverty_pct),
+  weekday = factor("Wed", levels = levels(model_data$weekday), ordered = TRUE)
+)
+
+pred_grid$predicted <- predict(nb_simp, newdata = pred_grid, type = "response")
+
+low <- pred_grid[pred_grid$income_10k == 5,]
+mid <- pred_grid[pred_grid$income_10k == 10,]
+high <- pred_grid[pred_grid$income_10k == 15,]
+
+# plot
+par(bg = "azure3", mar = c(5, 5, 4, 2))
+
+plot(low$tmean, low$predicted,
+     type = "l",
+     col = "chocolate3",
+     lwd = 2,
+     ylim = c(0, max(pred_grid$predicted) * 1.1),
+     main = "Predicted Daily Rides by Temperature and Neighborhood Income",
+     xlab = "Mean Temperature (°F)",
+     ylab = "Predicted Rides per Station")
+
+lines(mid$tmean,  mid$predicted,  col = "chartreuse3", lwd = 2)
+lines(high$tmean, high$predicted, col = "mediumslateblue",  lwd = 2)
+
+legend("topleft",
+       legend = c("$50k", "$100k", "$150k"),
+       col = c("chocolate3", "chartreuse3", "mediumslateblue"),
+       lwd = 2,
+       title = "Median Income",
+       bg = "azure3")
+
+```
 
 ## Coefficient Plot
 

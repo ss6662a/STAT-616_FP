@@ -14,11 +14,32 @@ hist(model_data$rides, breaks = 40,
 
 # time series of total daily rides ----
 
+
 total_rides_per_day <- aggregate(rides ~ date, data = model_data, FUN = sum)
 
-par(mfrow = c(1, 1), bg = "azure3")
-plot(total_rides_per_day$rides, type = "l")
-lines(loess(total_rides_per_day$rides ~ total_rides_per_day$date))
+par(bg = "azure3")
+plot(total_rides_per_day$date, total_rides_per_day$rides,
+     type = "l",
+     col = "chocolate3",
+     main = "Total Daily Bikeshare Rides (2025)",
+     xlab = "Date",
+     ylab = "Total Rides",
+     xaxt = "n")
+axis.Date(1, at = seq(min(total_rides_per_day$date), 
+                      max(total_rides_per_day$date), 
+                      by = "month"),
+          format = "%b")
+lines(total_rides_per_day$date,
+      predict(loess(rides ~ as.numeric(date), data = total_rides_per_day, span = 0.2)),
+      col = "grey20",
+      lwd = 2,
+      lty = 2)
+legend("topleft",
+       legend = c("Daily rides", "Trend"),
+       col = c("chocolate3", "grey20"),
+       lty = c(1, 2),
+       lwd = c(1, 2),
+       bg = "azure3")
 
 
 # scatterplot of rides vs temperature ----
@@ -79,6 +100,46 @@ ggplot(model_data, aes(x = nb_fitted, y = nb_resid)) +
 
 # interaction plot ----
 
+
+pred_grid <- expand.grid(
+  tmean = seq(20, 90, by = 1),
+  income_10k = c(5, 10, 15),
+  prcp = 0,
+  snow = 0,
+  awnd = mean(model_data$awnd),
+  poverty_pct = mean(model_data$poverty_pct),
+  weekday = factor("Wed", levels = levels(model_data$weekday), ordered = TRUE)
+)
+
+pred_grid$predicted <- predict(nb_simp, newdata = pred_grid, type = "response")
+
+low <- pred_grid[pred_grid$income_10k == 5,]
+mid <- pred_grid[pred_grid$income_10k == 10,]
+high <- pred_grid[pred_grid$income_10k == 15,]
+
+# plot
+par(bg = "azure3", mar = c(5, 5, 4, 2))
+
+plot(low$tmean, low$predicted,
+     type = "l",
+     col = "chocolate3",
+     lwd = 2,
+     ylim = c(0, max(pred_grid$predicted) * 1.1),
+     main = "Predicted Daily Rides by Temperature and Neighborhood Income",
+     xlab = "Mean Temperature (°F)",
+     ylab = "Predicted Rides per Station")
+
+lines(mid$tmean,  mid$predicted,  col = "chartreuse3", lwd = 2)
+lines(high$tmean, high$predicted, col = "mediumslateblue",  lwd = 2)
+
+legend("topleft",
+       legend = c("$50k", "$100k", "$150k"),
+       col = c("chocolate3", "chartreuse3", "mediumslateblue"),
+       lwd = 2,
+       title = "Median Income",
+       bg = "azure3")
+
+# ----
 ggplot(model_data, aes(x = tmean, y = rides, color = weekday)) +
   geom_point(alpha = 0.15) +
   geom_smooth(method = "glm", method.args = list(family = "poisson"), se = FALSE) +
