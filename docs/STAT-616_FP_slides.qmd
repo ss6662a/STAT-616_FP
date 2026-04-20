@@ -9,15 +9,21 @@ format:
 
 
 ```{r}
-#| label: setup
+#| label: packages
+#| echo: false
+#| output: false
+
+library(here)
+source(here("code", "00_load_packages.R"))
+
+```
+
+```{r}
+#| label: cleaning and models
 #| echo: false
 #| output: false
 #| cache: true
 
-library(here)
-library(tidyverse)
-
-source(here("code", "00_load_packages.R"))
 source(here("code", "04_combine_data.R"))
 source(here("code", "05_regression_model.R"))
 
@@ -53,12 +59,22 @@ write the research question
 ready_data %>% 
   head() %>% 
   select(start_station_name, date, rides, est_med_income, prcp, snow, tmean) %>%
+  rename(
+    Station = "start_station_name",
+    Date = "date",
+    Rides = "rides",
+    `Med. Income` = "est_med_income",
+    `Rain (in.)` = "prcp",
+    `Snow (in.)` = "snow",
+    `Mean Temp. (°F)` = "tmean"
+  ) %>% 
   kable(digits = 2) %>%
   kable_styling(
-    full_width = FALSE
+    full_width = FALSE,
+    font_size = 25
   ) %>%
   row_spec(0, color = "white") %>%
-  row_spec(1:2, color = "white")
+  row_spec(1:6, color = "white")
 
 
 ```
@@ -88,7 +104,40 @@ hist(model_data$rides, breaks = 50,
 
 ## Time Series
 
-seasonality brings temperature as a potential predictor
+```{r}
+#| label: time series plot
+#| cache: true
+
+total_rides_per_day <- aggregate(rides ~ date, data = model_data, FUN = sum)
+
+par(bg = "azure3")
+plot(total_rides_per_day$date, total_rides_per_day$rides,
+     type = "l",
+     col = "chocolate3",
+     main = "Total Daily Bikeshare Rides (2025)",
+     xlab = "Date",
+     ylab = "Total Rides",
+     xaxt = "n")
+axis.Date(1, at = seq(min(total_rides_per_day$date), 
+                      max(total_rides_per_day$date), 
+                      by = "month"),
+          format = "%b")
+lines(total_rides_per_day$date,
+      predict(loess(rides ~ as.numeric(date), data = total_rides_per_day, span = 0.2)),
+      col = "grey20",
+      lwd = 2,
+      lty = 2)
+legend("topleft",
+       legend = c("Daily rides", "Trend"),
+       col = c("chocolate3", "grey20"),
+       lty = c(1, 2),
+       lwd = c(1, 2),
+       bg = "azure3")
+
+
+
+```
+
 
 
 # Modeling
@@ -109,7 +158,26 @@ explain overdispersion of poisson model, so needed to swtich to negative binomia
 
 ```{r}
 #| label: comparison table
+#| cache: true
 
+model_data$pred_pois <- predict(pois_model, type = "response")
+rmse_pois <- sqrt(mean((model_data$rides - model_data$pred_pois)^2))
+
+model_data$pred_nb <- predict(nb_simp, type = "response")
+rmse_nb <- sqrt(mean((model_data$rides - model_data$pred_nb)^2))
+
+model_compare <- tibble(
+  Model = c("Poisson", "Negative Binomial"),
+  AIC = c(AIC(pois_model), AIC(nb_simp)),
+  Dispersion = c(
+    deviance(pois_model) / df.residual(pois_model),
+    deviance(nb_simp) / df.residual(nb_simp)
+  ),
+  RMSE = c(rmse_pois, rmse_nb)
+)
+
+
+# table
 model_compare %>%
   kable(digits = 2) %>%
   kable_styling(
@@ -119,14 +187,42 @@ model_compare %>%
   row_spec(0, color = "white") %>%
   row_spec(1:2, color = "white")
 
-
 ```
 
 # Interpretation
 
 ## Interaction term
 
-look at model results table
+
+```{r}
+#| label: nb model results
+#| cache: true
+
+tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
+  mutate(
+    term = c("Intercept", "Temperature", "Precipitation", "Snow", 
+             "Wind", "Income ($10k)", "Poverty %", "Weekday.L", 
+             "Weekday.Q", "Weekday.C", "Weekday^4", "Weekday^5", 
+             "Weekday^6", "Temp × Income"),
+    sig = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      TRUE ~ ""
+    )
+  ) %>%
+  select(term, estimate, conf.low, conf.high, p.value, sig) %>%
+  kable(
+    digits = 3,
+    col.names = c("Term", "IRR", "CI Low", "CI High", "p-value", "")
+  ) %>%
+  kable_styling(font_size = 20, full_width = FALSE) %>%
+  row_spec(0, color = "white") %>%
+  row_spec(1:14, color = "white") %>%
+  row_spec(14, bold = TRUE)
+
+```
+
 
 ##
 
@@ -177,7 +273,26 @@ legend("topleft",
 
 ## Coefficient Plot
 
-plot here
+```{r}
+#| label: coefficient plot
+#| cache: true
+
+nb_coef <- tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
+  filter(term != "(Intercept)")
+
+ggplot(nb_coef, aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  coord_flip() +
+  labs(
+    title = "Incidence Rate Ratios from Negative Binomial Model",
+    x = "Predictor",
+    y = "IRR"
+  )
+
+
+```
 
 ## Conclusions
 

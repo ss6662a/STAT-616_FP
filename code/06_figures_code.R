@@ -61,7 +61,7 @@ model_data$pred_pois <- predict(pois_model, type = "response")
 rmse_pois <- sqrt(mean((model_data$rides - model_data$pred_pois)^2))
 
 # Negative Binomial predictions
-model_data$pred_nb <- predict(nb_model, type = "response")
+model_data$pred_nb <- predict(nb_simp, type = "response")
 
 rmse_nb <- sqrt(mean((model_data$rides - model_data$pred_nb)^2))
 
@@ -71,10 +71,10 @@ rmse_nb
 #compare(rmse_pois vs rmse_nb)
 model_compare <- tibble(
   Model = c("Poisson", "Negative Binomial"),
-  AIC = c(AIC(pois_model), AIC(nb_model)),
+  AIC = c(AIC(pois_model), AIC(nb_simp)),
   Dispersion = c(
     deviance(pois_model) / df.residual(pois_model),
-    deviance(nb_model) / df.residual(nb_model)
+    deviance(nb_simp) / df.residual(nb_simp)
   ),
   RMSE = c(rmse_pois, rmse_nb)
 )
@@ -153,7 +153,7 @@ ggplot(model_data, aes(x = tmean, y = rides, color = weekday)) +
 
 # coefficient plot showing IRRs and CIs ----
 
-nb_coef <- broom::tidy(nb_model, exponentiate = TRUE, conf.int = TRUE) %>%
+nb_coef <- broom::tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
   filter(term != "(Intercept)")
 
 ggplot(nb_coef, aes(x = reorder(term, estimate), y = estimate)) +

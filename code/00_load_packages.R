@@ -7,6 +7,7 @@ library(httr2)
 library(sf)
 library(flextable)
 library(kableExtra)
+library(broom)
 
 
 
