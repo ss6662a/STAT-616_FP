@@ -5,6 +5,7 @@ date: "April 22, 2026"
 format: 
   revealjs: 
     theme: moon
+    embed-resources: true
 ---
 
 
