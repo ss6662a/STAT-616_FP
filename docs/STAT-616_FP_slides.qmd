@@ -39,7 +39,7 @@ source(here("code", "05_regression_model.R"))
 - Easy and cheap transportation methods should be accessible to those who need it the most
 - If weather disproportionately affects lower income neighborhoods, transportation eauity could be affected
 
-## Research Question
+## Research Question {.center}
 
 Does weather have a more extreme effect on Capital Bikeshare ridership in lower income neighborhoods in DC?
 
@@ -148,7 +148,7 @@ legend("topleft",
 
 ## Goals
 
-- Want to model a daily ride count using weather, income, and other socio-economic predictors
+- Want to model a daily ride count using weather, income, and other socioeconomic predictors
 	- Poisson model
 - Does the effect of weather vary by neighborhood income?
 	- Weather x income interactions
@@ -156,7 +156,7 @@ legend("topleft",
 ## Poisson
 
 - Assumes:
-	- data follows Poisson distrubion
+	- data follows Poisson distribution
 	- mean = variance
 
 MODEL HERE?
@@ -173,16 +173,16 @@ table
 ## Negative Binomial
 
 - Poisson assumption (mean = variance) was badly violated
-- Dispersion statistic = 'r code here'
+- Poisson model dispersion statistic = `r round(poi_overdispersion, 2)`
 	- Variance is nearly 12× the mean
 	- Standard errors become too small, making results look more significant than they are
 - Negative Binomial model adds a parameter to absorb extra variability
-- Dispersion drops to 'r #code here' → much better fit
+- Dispersion drops to `r round(nb_overdispersion, 2)`
 
 ## Negative Binomial
 ### Model
 
-explain the negative binomial model, the full, then the sinplified
+explain the negative binomial model, the full, then the simplified
 
 ## Comparison
 
@@ -254,7 +254,7 @@ tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
 ```
 
 
-##
+## Income x Weather Interaction
 
 ```{r}
 #| label: interaction plot
