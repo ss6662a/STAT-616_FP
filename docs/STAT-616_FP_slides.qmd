@@ -36,11 +36,11 @@ source(here("code", "05_regression_model.R"))
 
 - explain why this matters
 - easy transportation should be accessible to those who need it the most
-- does weather disproportionately affect lower income groups
+- does weather disproportionately affect lower income neighborhoods
 
 ## Research Question
 
-write the research question
+Does weather have a more extreme effect on Capital Bikeshare ridership in lower income neighborhoods in DC?
 
 ## Data
 
