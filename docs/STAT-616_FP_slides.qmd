@@ -15,6 +15,9 @@ format:
 library(here)
 source(here("code", "00_load_packages.R"))
 
+# all of the code can be found on this GitHub Repo:
+# https://github.com/ss6662a/STAT-616_FP
+
 ```
 
 ```{r}
