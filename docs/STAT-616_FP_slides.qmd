@@ -148,21 +148,41 @@ legend("topleft",
 
 ## Goals
 
-- Want to predict how the number of rides will differ as income differs and weather changes
-  - interaction between income and weather
-- Count data so Poisson model
-
-- interaction term, count data
+- Want to model a daily ride count using weather, income, and other socio-economic predictors
+	- Poisson model
+- Does the effect of weather vary by neighborhood income?
+	- Weather x income interactions
 
 ## Poisson
 
-- idk
+- Assumes:
+	- data follows Poisson distrubion
+	- mean = variance
+
+MODEL HERE?
 
 explain Poisson model..maybe use Latex to write out on another slide
 
+## Poisson results
+
+- Overdispersion
+- Assumptions clearly violated
+table
+
+
 ## Negative Binomial
 
-explain overdispersion of poisson model, so needed to swtich to negative binomial
+- Poisson assumption (mean = variance) was badly violated
+- Dispersion statistic = 'r code here'
+	- Variance is nearly 12× the mean
+	- Standard errors become too small, making results look more significant than they are
+- Negative Binomial model adds a parameter to absorb extra variability
+- Dispersion drops to 'r #code here' → much better fit
+
+## Negative Binomial
+### Model
+
+explain the negative binomial model, the full, then the sinplified
 
 ## Comparison
 
