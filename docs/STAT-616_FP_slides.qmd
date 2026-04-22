@@ -50,8 +50,35 @@ Does weather have a more extreme effect on Capital Bikeshare ridership in lower 
 
 - Capital Bikeshare Data
 - National Oceanic and Atmospheric Administration (NOAA)
-  - DCA Weather Station
 - Census Income Data
+
+```{r}
+#| label: summary stats
+
+data.frame(
+  Variable = c("Rides", "Mean Temp (°F)", "Precipitation (in.)", 
+               "Snow (in.)", "Wind Speed", "Income ($10k)", "Poverty %"),
+  N = format(nrow(model_data), big.mark = ","),
+  Min = c(min(model_data$rides), min(model_data$tmean), min(model_data$prcp),
+          min(model_data$snow), min(model_data$awnd), min(model_data$income_10k),
+          min(model_data$poverty_pct)),
+  Mean = c(mean(model_data$rides), mean(model_data$tmean), mean(model_data$prcp),
+           mean(model_data$snow), mean(model_data$awnd), mean(model_data$income_10k),
+           mean(model_data$poverty_pct)),
+  Max = c(max(model_data$rides), max(model_data$tmean), max(model_data$prcp),
+          max(model_data$snow), max(model_data$awnd), max(model_data$income_10k),
+          max(model_data$poverty_pct))
+) %>%
+  kable(digits = 2) %>%
+  kable_styling(font_size = 20, full_width = FALSE, position = "left") %>%
+  row_spec(0, color = "white") %>%
+  row_spec(1:7, color = "white") %>% 
+  footnote(general = "392 stations",
+           general_title = "",
+           footnote_as_chunk = TRUE)
+
+```
+
 
 ## Challenges and Limitations with the Data
 
@@ -308,21 +335,77 @@ legend("topleft",
 #| cache: true
 
 nb_coef <- tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
-  filter(term != "(Intercept)")
+  filter(term != "(Intercept)") %>%
+  mutate(term = c("Temperature", "Precipitation", "Snow", "Wind", 
+                  "Income ($10k)", "Poverty %", "Weekday.L", "Weekday.Q", 
+                  "Weekday.C", "Weekday^4", "Weekday^5", "Weekday^6", 
+                  "Temp × Income"))
 
-ggplot(nb_coef, aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
-  geom_hline(yintercept = 1, linetype = "dashed") +
-  coord_flip() +
-  labs(
-    title = "Incidence Rate Ratios from Negative Binomial Model",
-    x = "Predictor",
-    y = "IRR"
-  )
+par(bg = "azure3", mar = c(5, 8, 4, 2))
+
+plot(nb_coef$estimate, 1:nrow(nb_coef),
+     xlim = c(min(nb_coef$conf.low) * 0.9, max(nb_coef$conf.high) * 1.1),
+     yaxt = "n",
+     pch = 19,
+     col = "chocolate3",
+     xlab = "Incidence Rate Ratio (IRR)",
+     ylab = "",
+     main = "Incidence Rate Ratios — Negative Binomial Model")
+
+segments(nb_coef$conf.low, 1:nrow(nb_coef),
+         nb_coef$conf.high, 1:nrow(nb_coef),
+         col = "chocolate3", lwd = 2)
+
+abline(v = 1, lty = 2, col = "grey20", lwd = 1.5)
+
+axis(2, at = 1:nrow(nb_coef),
+     labels = nb_coef$term,
+     las = 2,
+     cex.axis = 0.85)
+
+
+points(nb_coef$estimate[nb_coef$term == "Temp × Income"],
+       which(nb_coef$term == "Temp × Income"),
+       pch = 19, col = "chocolate4", cex = 1.5)
 
 
 ```
+
+## Rides by Day of Week
+
+```{r}
+#| label: rides by day of week
+
+weekday_grid <- expand.grid(
+  weekday = factor(levels(model_data$weekday), 
+                   levels = levels(model_data$weekday), 
+                   ordered = TRUE),
+  tmean = mean(model_data$tmean, na.rm = TRUE),
+  income_10k  = mean(model_data$income_10k, na.rm = TRUE),
+  prcp = 0,
+  snow = 0,
+  awnd = mean(model_data$awnd, na.rm = TRUE),
+  poverty_pct = mean(model_data$poverty_pct, na.rm = TRUE)
+)
+
+weekday_grid$predicted <- predict(nb_simp, newdata = weekday_grid, type = "response")
+
+par(bg = "azure3", mar = c(5, 5, 4, 2))
+
+plot(1:7, weekday_grid$predicted,
+     type = "b",
+     pch = 19,
+     col = "chocolate3",
+     lwd = 2,
+     xaxt = "n",
+     main = "Predicted Daily Rides by Day of Week",
+     xlab = "Day of Week",
+     ylab = "Predicted Rides per Station")
+
+axis(1, at = 1:7, labels = levels(model_data$weekday))
+
+```
+
 
 ## Conclusions
 
