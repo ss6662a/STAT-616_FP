@@ -40,7 +40,7 @@ source(here("code", "05_regression_model.R"))
 - Bikesharing is a popular, low-cost method of transportation in cities
 - Transportation is critical 
 - Easy and cheap transportation methods should be accessible to those who need it the most
-- If weather disproportionately affects lower income neighborhoods, transportation eauity could be affected
+- If weather disproportionately affects lower income neighborhoods, transportation equity could be affected
 
 ## Research Question {.center}
 
