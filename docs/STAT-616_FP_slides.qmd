@@ -49,7 +49,7 @@ Does weather have a more extreme effect on Capital Bikeshare ridership in lower 
 ## Data
 
 - Capital Bikeshare Data
-- Nation Oceanic and Atmospheric Administration (NOAA)
+- National Oceanic and Atmospheric Administration (NOAA)
   - DCA Weather Station
 - Census Income Data
 
@@ -97,7 +97,6 @@ ready_data %>%
 
 ```{r}
 #| label: exploratory histogram
-#| cache: true
 
 par(mfrow = c(1, 1), bg = "azure3")
 hist(model_data$rides, breaks = 50,
@@ -113,7 +112,6 @@ hist(model_data$rides, breaks = 50,
 
 ```{r}
 #| label: time series plot
-#| cache: true
 
 total_rides_per_day <- aggregate(rides ~ date, data = model_data, FUN = sum)
 
@@ -158,36 +156,35 @@ legend("topleft",
 
 ## Poisson
 
-- Assumes:
-	- data follows Poisson distribution
-	- mean = variance
-
-MODEL HERE?
-
-explain Poisson model..maybe use Latex to write out on another slide
-
-## Poisson results
-
-- Overdispersion
-- Assumptions clearly violated
-table
+- Modeling count data
+- Predictors relate to ride counts on a log scale
+- Coefficients are exponentiated to get Incidence Rate Ratios (IRRs)
+- Key assumption: mean = variance
 
 
-## Negative Binomial
+## Poisson Results
 
 - Poisson assumption (mean = variance) was badly violated
 - Poisson model dispersion statistic = `r round(poi_overdispersion, 2)`
-	- Variance is nearly 12× the mean
 	- Standard errors become too small, making results look more significant than they are
 - Negative Binomial model adds a parameter to absorb extra variability
 - Dispersion drops to `r round(nb_overdispersion, 2)`
 
-## Negative Binomial
+
+## Negative Binomial 
 ### Model
 
-explain the negative binomial model, the full, then the simplified
+- First: full model with all weather × income interactions
+  - Only temperature × income was significant
+  - Precipitation, snow, and wind interactions were not
+- Then fitted a simplified model
+  - AIC improved slightly
 
 ## Comparison
+
+- AIC drops dramatically with Negative Binomial
+- Dispersion is much better on NB
+- RMSE very similar
 
 ```{r}
 #| label: comparison table
@@ -224,8 +221,7 @@ model_compare %>%
 
 # Interpretation
 
-## Interaction term
-
+## Model Results
 
 ```{r}
 #| label: nb model results
@@ -239,15 +235,15 @@ tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
              "Weekday^6", "Temp × Income"),
     sig = case_when(
       p.value < 0.001 ~ "***",
-      p.value < 0.01  ~ "**",
-      p.value < 0.05  ~ "*",
+      p.value < 0.01 ~ "**",
+      p.value < 0.05 ~ "*",
       TRUE ~ ""
     )
   ) %>%
-  select(term, estimate, conf.low, conf.high, p.value, sig) %>%
+  select(term, estimate, std.error, conf.low, conf.high, p.value, sig) %>%
   kable(
     digits = 3,
-    col.names = c("Term", "IRR", "CI Low", "CI High", "p-value", "")
+    col.names = c("Term", "IRR", "SE", "CI Low", "CI High", "p-value", "")
   ) %>%
   kable_styling(font_size = 20, full_width = FALSE) %>%
   row_spec(0, color = "white") %>%
@@ -257,12 +253,11 @@ tidy(nb_simp, exponentiate = TRUE, conf.int = TRUE) %>%
 ```
 
 
-## Income x Weather Interaction
+## Temperature x Income Interaction
+
 
 ```{r}
 #| label: interaction plot
-#| cache: true
-#| echo: false
 
 pred_grid <- expand.grid(
   tmean = seq(20, 90, by = 1),
@@ -304,6 +299,8 @@ legend("topleft",
 
 ```
 
+
+
 ## Coefficient Plot
 
 ```{r}
@@ -329,8 +326,10 @@ ggplot(nb_coef, aes(x = reorder(term, estimate), y = estimate)) +
 
 ## Conclusions
 
-- The interaction has a small, but significant impact on the count of rides.
-- other conclusions
+- Weather affects ridership broadly
+- The temperature x income interaction is minimal but significant
+- Precipitation and snow suppress ridership uniformly regardless of income
+- Income independently predicts ridership, suggesting access gaps beyond just weather sensitivity
 
 # Thank you
 
